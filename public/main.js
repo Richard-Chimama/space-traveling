@@ -20,23 +20,30 @@ window.onload= function(){
 /* ----------------------------------------------------------------- */
 
 
-
 window.addEventListener("DOMContentLoaded", () =>{
     const tabLists = document.querySelector('[role="tablist"]');
+    if (!tabLists) {
+        console.error("Element with [role='tablist'] not found.");
+        return;
+    }
+
     const tabs = tabLists.querySelectorAll('[role="tab"]');
+    if (tabs.length === 0) {
+        console.error("No tabs found inside the [role='tablist'] element.");
+        return;
+    }
 
-    tabLists.addEventListener('keydown', (e)=>{
-        changeTabFocus(e, tabs)
-    })
+    tabLists.addEventListener('keydown', (e) => {
+        changeTabFocus(e, tabs);
+    });
 
+    tabs.forEach((tab) => {
+        tab.addEventListener('click', (e) => {
+            changeTabPanel(e);
+        });
+    });
+});
 
-    tabs.forEach((tab) =>{
-        tab.addEventListener('click', (e)=>{
-            changeTabPanel(e)
-        } )
-    } )
-
-})
 
 let tabFocus = 0;
 function changeTabFocus(e, tabs){
@@ -75,23 +82,19 @@ function changeTabPanel(e){
     const tabContainer = targetTab.parentNode;
     const mainContainer = tabContainer.parentNode;
 
-    tabContainer.querySelector('[aria-selected="true"]')
-        .setAttribute("aria-selected", false)
-    
-    targetTab.setAttribute("aria-selected", true)
-    
-    mainContainer.querySelectorAll('[role="tabpanel"]').forEach((panel) =>
-                 panel.setAttribute("hidden", true))
-    mainContainer.querySelector([`#${targetPanel}`]).removeAttribute('hidden');
-   
-    mainContainer
-    .querySelectorAll('picture')
-    .forEach((picture) => {
-         picture.setAttribute("style","display:none")
-        }
-    );
-    
-    mainContainer.querySelector([`#${targetImage}`]).setAttribute("style", "display:' block'");
+    tabContainer.querySelector('[aria-selected="true"]').setAttribute("aria-selected", false);
+    targetTab.setAttribute("aria-selected", true);
 
+    mainContainer.querySelectorAll('[role="tabpanel"]').forEach((panel) =>
+        panel.setAttribute("hidden", true)
+    );
+    mainContainer.querySelector(`#${targetPanel}`).removeAttribute('hidden');
+
+    mainContainer.querySelectorAll('picture').forEach((picture) => {
+        picture.setAttribute("style", "display:none");
+    });
+
+    mainContainer.querySelector(`#${targetImage}`).setAttribute("style", "display:block");
 }
+
 
